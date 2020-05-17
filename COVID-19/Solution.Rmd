@@ -1,0 +1,117 @@
+---
+title: "STA303 A3"
+author: "Chengkai Mai"
+date: "2020/4/2"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Question 1
+
+### 1.1
+
+$$
+Y_i \sim{Bernolli(\lambda_i)}\\
+logit(\lambda_i) = X_i\beta +  f_i(W_{i};v)\\
+$$
+**res** model
+$Y_{i}$ is the observation for time i
+$X_{ij}$ is a vector of covariates (bygroup,sin12,cos12,cos6,sin6)
+$f_i(W_{i}; v)$ is the smoothly-varying function of timeInt i
+- v is the smoothing variable
+
+
+
+$$
+Y_{ij} \sim{Bernolli(\lambda_{ij})} \\
+logit(\lambda_{ij}) = X_{ij}\beta + f_i(W_{ij};v) + U_i \\
+U_i \sim N(0, \sigma^2)
+$$
+**res1** model
+$Y_{ij}$ is the observation for time j in timInt i
+$U_i$ is the timeIid specific random effect
+$X_{ij}$ is a vector of covariates (bygroup,sin12,cos12,cos6,sin6)
+$f_i(W_{ij}; v)$ is the smoothly-varying function of timeInt
+
+
+
+### 1.2
+
+The result of gamm model is useful for analyizing the hypthoesis. Specifically, Metro Hispanic or Latino vote against Trump, so they are stressed by Trump's election. However, Non Metro Whites vote for Trump, so they are not affected much by Trump's election. Since we are focusing on the population(MetroHispanicorLatino) that being stressed by the election, so random effect is important for this hypothesis analysis. 
+
+
+### 1.3
+From figure 2, we could see the hypothesis is being testfied. As question mentioned, Rural White (NonmetroNotHispanicorLatino) vote for trump, so they are not affected by Trump's elections. Hence, there is no effect in their birth ratio. In contrast to Rural White, Metro Hispanic or Lation mostly vote against Trump and stressed from Trump's election, since they are discriminated by Trump. As the result, their predicted birth ratio is consistently dropping over time.
+To conclude, it is true that the long-term trend in sex ratios for urban Hispanics and rural Whites is consistent with the  discrimination against Hispanics.
+
+
+### 1.4
+
+According to Figure 3b, we can notice a decrease from ratio above 1.0 to below 1.0 in the period of 5 months after the election. Since pregnancy usually take 10 months until the birth, so those birth 5 months after the election are those affected by the effection during their pregnancy. Although, the effect is noticeable, but the effect is as much as the fluctuatuion in previous years.
+
+
+
+
+## Question 2
+
+### 2.1 
+$$
+Y_{ij} \sim{Poisson(\lambda_{ij})} \\
+log(\lambda_{ij}) = X_i\beta + f(W_{ij};v) + U_i \\
+U_i \sim N(0, \sigma^2) \\
+$$
+$Y_{ij}$ is the observation for deaths j in timInt i
+
+$U_i$ is the timeIid specific random effect
+
+$X_{ij}$ is a vector of covariates (weekday)
+
+$f_i(w; v)$ is the smoothly-varying function of timeInt
+
+
+### 2.2
+From the graphs of Italy provided, we can see Italy's death count are have not reach the peaks yet, and most likely there is going to be a sharp increase before April.
+
+According to graphs of Hubei, the trend of death count had sharply increased to a peak in mid-Februray and will continue decreasing after mid-March. However, it is also possible to lead to another increase after mid-March. 
+
+
+
+### 2.3
+
+```{r eval=FALSE, include=TRUE}
+lmtest::lrtest(Hubei2$mer, gamHubei$mer)
+
+nadiv::LRTest(logLik(Hubei2$mer), logLik(gamHubei$mer), boundaryCorrect=TRUE)
+```
+
+Since the reml is set to FALSE in Hubei2, so the likelihood ratio test for these two models are invalid. Therefore, no interpretation can be made on `lmtest::lrtest`.
+
+The log likelihood ratio test with boundary correction  shows the p-value is greater than 0.05. Hence, there is no evidence to reject null hypothesis. Simpler model, Huber2 is preferred.
+
+
+```{r eval=FALSE, include=TRUE}
+lmtest::lrtest(Hubei4, gamHubei$mer)
+
+nadiv::LRTest(logLik(Hubei4), logLik(gamHubei$mer), boundaryCorrect=TRUE)
+```
+
+Since we are testing the random effect of model, we are primarily looking at the log likelihood ratio test. The p-value is much greater than 0.05. Which failed to reject null hypothesis. Hence, this Log Likelihood Ratio Test suggests the simpler model, Huabei4 is preferred.
+
+Since p-value is greater than 0.05, so the test failed to reject Null hypothesis. Hence, this Likelihood Ratio Test suggests the simpler model, Huabei4 is better option.
+
+
+```{r eval=FALSE, include=TRUE}
+lmtest::lrtest(Hubei2$mer, Hubei3)
+
+nadiv::LRTest(logLik(Hubei2$mer), logLik(Hubei3), boundaryCorrect=TRUE)
+```
+
+Because Hubei2 is not nested model of Hubei3, so the result of those Likelihood ratio test is meaningfulless.
+Hence, no interpretation can be made in this case. Addtionally, Huabei3 is set to use 'ML' instead of 'REML' the result of lmtest::lrtest is invalid.
+
+
